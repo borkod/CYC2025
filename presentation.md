@@ -207,24 +207,22 @@ Slide: ENTRA ID
 
 Slide: Integrated Solution
 
+- An external process (e.g. CI/CD) logs in with an Azure service principal.
+- When a login with the service principal is successful, it authorizes the use of the Azure App Registration and provides the client with a token that specifies the roles, audience, and permissions available to the client in Azure/Entra ID.
+- The client uses the token obtained from Microsoft Entra ID to exchange it with a temporary token from AWS STS.
+- AWS STS generates a temporary token and provides it to the client.
+- The client is able to take on the IAM Web Identity Role and gain access to the resources permitted for that role.
+- A trust policy within the IAM Web Identity Role authorizes AWS STS to exchange an Entra ID token for an AWS STS token.
+
 -->
 ## AWS + Entra ID Integrated Solution
 
-![width:800](./images/integrated-solution.png)
+![bg fit right](./images/awsazureiamlight.png)
 
----
-
-<!-- Slide 8: TODO TITLE -->
-## TODO TITLE
-<style scoped>section { font-size: 20px; }</style>
-The authentication and authorization process depicted are as follows:
-- An external process (here it’s part of a CI/CD pipeline) logs in with an Azure service principal using a certificate-based authentication to gain an access token from Microsoft Entra ID.
-- When a login with the service principal is successful, it authorizes the use of the Azure App Registration and provides the client with a token that specifies the roles, audience, and permissions available to the client in Azure/Entra ID.
-- The client uses the token obtained from Microsoft Entra ID to exchange it with a temporary token from AWS Security Token Service (AWS STS).
-- AWS STS generates a transient token with a short lifespan and dispatches it to the client.
-- Finally, the client is able to take on the IAM Web Identity Role and gain access to the resources permitted for that role.
-
-You might wonder about the authorization for AWS STS to exchange an Entra ID token for a token. This capability is enabled through the establishment of a trust policy within the IAM Web Identity Role.
+1. External application is registered in Entra ID
+2. Upon login, Entra ID provides a token
+3. The client uses the Entra ID token to obtain a temporary token from AWS STS
+4. The client assumes the IAM Web Identity Role
 
 ---
 

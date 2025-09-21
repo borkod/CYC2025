@@ -217,7 +217,7 @@ Slide: Integrated Solution
 -->
 ## AWS + Entra ID Integrated Solution
 
-![bg fit right](./images/awsazureiamlight.png)
+![bg fit right](./images/integrated-solution-dark.png)
 
 1. External application is registered in Entra ID
 2. Upon login, Entra ID provides a token
@@ -319,28 +319,79 @@ Slide: Solution overview
 -->
 ## Solution overview
 
-![height:500](./images/solution.png)
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:600 center](./images/automation-architecture-dark.png)
 
 ---
 
-<!-- Slide 13: Solution Components -->
-## Solution Components
+<!--
 
-Table of components
+Slide: Solution Components - Creation of IAM Web Identity Role
+
+- **Create Service Principal Lambda**
+  - Function calls a Entra ID API to register a new application. The Lambda function returns a unique audience identifier for the Entra ID application.
+
+- **Add Audience to OIDC Provider Lambda**
+  - Function receives an audience identifier. It adds the audience identifier to the pre-deployed IAM OIDC Provider in the newly-created AWS account.
+
+- **Assign Role to Audience Lambda**
+  - Function updates the trust relationship in the IAM Web Identity Role by adding the audience identifier of the application registration to allow the newly-created service principal to assume the Web Identity Role.
+  - This step is required because, unlike a manual setup, the AWS user does not have an audience identifier so users enter any dummy value which will be overwritten few seconds afterwards.
+
+-->
+## Creation of IAM Web Identity Role
+
+![bg fit right](./images/automation-architecture-dark.png)
+
+<style scoped>
+section {
+    font-size: 22px;
+}
+</style>
+
+- **Create Service Principal Lambda**
+  - Invokes Entra ID API to register a new application.
+
+- **Add Audience to OIDC Provider Lambda**
+  - Adds the audience identifier to the IAM OIDC Provider.
+
+- **Assign Role to Audience Lambda**
+  - Updates the trust relationship in the IAM Web Identity Role to add the audience identifier and enable the service principal to assume the role.
 
 ---
 
-<!-- Slide 14: Solution Components 2 -->
-## Solution Components
+<!--
 
-Table of components
+Slide: Solution Components - Deletion of IAM Web Identity Role
 
----
+- **Delete Service Principal Lambda**
+  - Invokes Entra ID API to delete the existing service principal.
 
-<!-- Slide 15: Addressing the Challenges Through Automation -->
-## Addressing the Challenges Through Automation
+- **Remove Audience from OIDC Provider Lambda**
+  - Removes the audience identifier from the IAM OIDC Provider.
 
-Some stuff
+-->
+## Deletion of IAM Web Identity Role
+
+![bg fit right](./images/automation-architecture-dark.png)
+
+<style scoped>
+section {
+    font-size: 22px;
+}
+</style>
+
+- **Delete Service Principal Lambda**
+  - Invokes Entra ID API to delete the existing service principal.
+
+- **Remove Audience from OIDC Provider Lambda**
+  - Removes the audience identifier from the IAM OIDC Provider.
 
 ---
 

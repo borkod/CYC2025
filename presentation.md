@@ -64,23 +64,18 @@ Running: Rideau Canal in Ottawa
 
 Slide: AWS IAM
 
-Identity Management
-
 - Creation and management of user identities (users, groups, and roles) within AWS.
 - Each identity can be assigned **access keys** to authenticate to AWS resources.
 - Supports multi-factor authentication (MFA) for additional security.
 
-Role-Based Access Control (RBAC) & Permission Management
 - Permissions are granted through policies that define what actions are allowed on specific resources.
 - IAM roles used to assign permissions.
 - Fine grained access control helps implement the principle of least privilege by ensuring users only have the permissions needed for their role.
 
-Federated Identity Integration (SSO, SAML, OIDC)
 - IAM integrates with external identity providers (e.g., Microsoft Entra ID, Okta) to enable Single Sign-On (SSO) capabilities.
 - Supports both SAML (Security Assertion Markup Language) and OIDC (OpenID Connect) for federating access to AWS.
 - Reducing the need for separate AWS credentials and improving security with centralized user management.
 
-Temporary Credentials & Session Management
 - AWS IAM enables issuance of temporary security credentials through AWS Security Token Service (STS).
 - Ideal for situations requiring short-term access to AWS resources, such as third-party apps or external contractors.
 - Temporary credentials are automatically revoked after a set time, reducing the risk of stale access permissions.
@@ -132,7 +127,7 @@ aws_secret_access_key=je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY
 Slide: DO NOT USE SECRET KEYS
 
 - Long-term access keys can be compromised if exposed or mishandled, leading to persistent security risks.
-- Against prescribed security best practices.
+- Against prescribed AWS security best practices.
 - Managing access keys across multiple users, services, and systems becomes complex as environments grow.
 - Access keys are harder to track and audit compared to roles with temporary credentials.
 - Against corporate, enterprise, or regulatory security policies.
@@ -163,7 +158,7 @@ Slide: OIDC
 - OIDC tokens are short-lived and can be dynamically scoped, reducing the risk of stale or overly broad permissions that are common with IAM access keys.
 
 -->
-## Better Alternative: OIDC
+## Better Alternative: Use OIDC
 
 ### OIDC enables federated identity management across applications and services
 
@@ -184,7 +179,7 @@ Slide: AWS OIDC
 - Ideal for organizations that want to authenticate users from external identity providers like Google, Facebook, or enterprise SSO solutions.
 - Useful for scenarios where users need access to AWS resources but should not have IAM user credentials (e.g., external contractors, third-party services).
 - Reduces the risk of credential leakage by using short-lived tokens instead of long-term AWS IAM access keys.
-- **IAM Web Identity Roles** allow users to assume AWS roles using tokens from external identity providers (such as OIDC-compatible services like Google, Facebook, or custom enterprise SSO solutions).
+- IAM Web Identity Roles allow users to assume AWS roles using tokens from external identity providers (such as OIDC-compatible services like Google, Facebook, or custom enterprise SSO solutions).
 
 -->
 ## AWS IAM OIDC Provider
@@ -255,7 +250,7 @@ img[alt~="center"] {
 }
 </style>
 
-![height:550 center](./images/entra-app-registration-manual.png)
+![height:550 center](./images/manual/entra-app-registration-manual.png)
 
 ---
 
@@ -273,7 +268,7 @@ img[alt~="center"] {
 }
 </style>
 
-![height:550 center](./images/entra-app-registration-manual-2.png)
+![height:550 center](./images/manual/entra-app-registration-manual-2.png)
 
 ---
 
@@ -293,7 +288,7 @@ img[alt~="center"] {
 }
 </style>
 
-![height:300 center](./images/aws-oidc-aud-manual.png)
+![height:300 center](./images/manual/aws-oidc-aud-manual.png)
 
 ---
 
@@ -311,7 +306,7 @@ img[alt~="center"] {
 }
 </style>
 
-![height:500 center](./images/aws-iam-create-web-role-manual.png)
+![height:500 center](./images/manual/aws-iam-create-web-role-manual.png)
 
 ---
 
@@ -341,7 +336,7 @@ Slide: Manual setup - IAM Web Identity Role Configuration
 }
 ```
 
-![bg fit right](./images/aws-iam-create-web-role-manual-2.png)
+![bg fit right](./images/manual/aws-iam-create-web-role-manual-2.png)
 
 ---
 
@@ -487,7 +482,11 @@ section {
 
 ---
 
-<!-- Slide: Info & Source Code -->
+<!--
+
+Slide: Info & Source Code
+
+-->
 ## Additional Info
 
 <style>
@@ -505,3 +504,117 @@ section {
 <i class="fa fa-linkedin"></i> https://www.linkedin.com/in/borkod/
 
 ---
+---
+<!--
+
+Appendix
+
+-->
+
+## Appendix
+
+<!--
+
+Slide: Demo - IAM Web Identity Role Creation
+
+-->
+## Demo - IAM Web Identity Role Creation
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:500 center](./images/demo/aws-iam-create-web-role-dummy.png)
+
+---
+
+<!--
+
+Slide: Demo - IAM Web Identity Role Creation
+
+-->
+## Demo - IAM Web Identity Role Creation
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:500 center](./images/demo/aws-iam-create-web-role-dummy-2.png)
+
+---
+
+<!--
+
+Slide: Demo - Step Function Execution
+
+-->
+## Demo - Step Function Execution
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:500 center](./images/demo/aws-sf-create.png)
+
+---
+
+<!--
+
+Slide: Demo - Entra ID App Registration
+
+-->
+## Demo - Entra ID App Registration
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:500 center](./images/demo/entra-app-registration-dummy.png)
+
+---
+
+<!--
+
+Slide: Demo - AWS IAM OIDC Provider Audience
+
+-->
+## Demo - AWS IAM OIDC Provider Audience
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:500 center](./images/demo/aws-oidc-aud.png)
+
+---
+
+<!--
+
+Slide: Demo - AWS IAM Role Audience Update
+
+-->
+## Demo - AWS IAM Role Audience Update
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:500 center](./images/demo/aws-iam-dummy-role-aud.png)

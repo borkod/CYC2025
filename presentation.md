@@ -19,19 +19,6 @@ Title Slide
 
 <!--
 
-Slide: Key Takeaways
-
--->
-## Key Takeaways
-
-- Do not use Access Keys and Secret Access Keys
-- Use OIDC for secure system-to-system authentication
-- Leverage automation at scale to improve security and reliability
-
----
-
-<!--
-
 Slide: About Me
 
 Recommended podcast: Stuff You Should Know
@@ -59,17 +46,27 @@ Running: Rideau Canal in Ottawa
 
 ---
 
+<!--
+
+Slide: Key Takeaways
+
+-->
+## Key Takeaways
+
+- Do not use Access Keys and Secret Access Keys
+- Use OIDC for secure system-to-system authentication
+- Leverage automation at scale to improve security and reliability
+
+---
 
 <!-- 
 
 Slide: AWS IAM
 
 - Creation and management of user identities (users, groups, and roles) within AWS.
-- Each identity can be assigned **access keys** to authenticate to AWS resources.
-- Supports multi-factor authentication (MFA) for additional security.
-
-- Permissions are granted through policies that define what actions are allowed on specific resources.
-- IAM roles used to assign permissions.
+- Each identity can be assigned access keys to authenticate to AWS resources.
+- Permissions are granted through IAM policies that define what actions are allowed on specific resources.
+- IAM roles used to assign these permissions.
 - Fine grained access control helps implement the principle of least privilege by ensuring users only have the permissions needed for their role.
 
 - IAM integrates with external identity providers (e.g., Microsoft Entra ID, Okta) to enable Single Sign-On (SSO) capabilities.
@@ -81,7 +78,7 @@ Slide: AWS IAM
 - Temporary credentials are automatically revoked after a set time, reducing the risk of stale access permissions.
 
 -->
-## AWS IAM
+## AWS IAM Service
 
 ### Provides Centralized Identity and Access Management
 
@@ -129,9 +126,9 @@ Slide: DO NOT USE SECRET KEYS
 - Long-term access keys can be compromised if exposed or mishandled, leading to persistent security risks.
 - Against prescribed AWS security best practices.
 - Managing access keys across multiple users, services, and systems becomes complex as environments grow.
-- Access keys are harder to track and audit compared to roles with temporary credentials.
+- Access keys are harder to track and audit compared to IAM roles.
 - Against corporate, enterprise, or regulatory security policies.
-- Access keys are tied to specific IAM users, not roles or fine-grained policies.
+- Access keys are tied to specific IAM users, not roles (does not use RBAC).
 
 -->
 ## DO NOT USE ACCESS KEYS
@@ -151,11 +148,11 @@ Slide: OIDC
 - OIDC is an authentication layer built on top of OAuth 2.0, enabling identity verification using tokens.
 - Additionally, these tokens that carry claims (user info) and scopes (permissions).
 - This allows fine-grained authorization in apps by controlling what data users can access based on their identity.
-- It allows applications to authenticate users via external identity providers (e.g., Google, Microsoft).
+- OIDC tokens are short-lived and can be dynamically scoped, reducing the risk of stale or overly broad permissions that are common with IAM access keys.
+- It allows applications to authenticate users via external identity providers (e.g. Microsoft, Okta).
 - OIDC is commonly used for Single Sign-On (SSO), allowing users to log in once and access multiple apps.
 - Reduces the need for separate credentials.
 - OIDC provides more secure and scalable user authentication compared to long-term AWS IAM access keys, which are prone to exposure and management overhead.
-- OIDC tokens are short-lived and can be dynamically scoped, reducing the risk of stale or overly broad permissions that are common with IAM access keys.
 
 -->
 ## Better Alternative: Use OIDC
@@ -171,15 +168,15 @@ Slide: OIDC
 
 <!--
 
-Slide: AWS OIDC
+Slide: AWS OIDC Provider
 
-- AWS IAM OIDC (OpenID Connect) allows external identity providers (like Google or Microsoft Entra ID) to authenticate users for AWS services.
-- It enables federated access, allowing users to sign in using their existing credentials, without needing separate AWS IAM user accounts.
-- Supports temporary short-lived credentials
-- Ideal for organizations that want to authenticate users from external identity providers like Google, Facebook, or enterprise SSO solutions.
+- AWS IAM OIDC Provider allows external identity providers (like Microsoft Entra ID) to authenticate users for AWS services.
+- It enables federated access, allowing users to sign in using their existing credentials in those external IdP, without needing separate AWS IAM user accounts.
+- Supports temporary short-lived credentials.
+- Ideal for organizations that want to authenticate users from external identity providers.
 - Useful for scenarios where users need access to AWS resources but should not have IAM user credentials (e.g., external contractors, third-party services).
 - Reduces the risk of credential leakage by using short-lived tokens instead of long-term AWS IAM access keys.
-- IAM Web Identity Roles allow users to assume AWS roles using tokens from external identity providers (such as OIDC-compatible services like Google, Facebook, or custom enterprise SSO solutions).
+- IAM Web Identity Roles allow users to assume AWS roles using tokens from external identity providers.
 
 -->
 ## AWS IAM OIDC Provider
@@ -195,8 +192,7 @@ Slide: AWS OIDC
 
 Slide: ENTRA ID
 
-- Entra ID (formerly Azure Active Directory) allows organizations to manage users.
-- Comprehensive cloud-based IdP
+- Entra ID (formerly Azure Active Directory) is a comprehensive cloud-based IdP
 - Provides tools to manage lifecycle of users such as provisioning and deprovisioning, access permissions.
 - Governance and security - conditional access policies, MFA, advanced reporting
 - Federated access enabling SSO via SAML or OIDC
@@ -218,10 +214,10 @@ Slide: Integrated Solution
 
 - An external application (e.g. CI/CD) is registered in Entra ID.
 - An external application logs in with an Azure service principal.
-- When a login with the service principal is successful, it authorizes the use of the Azure App Registration and provides the client with a token that specifies the roles, audience, and permissions available to the client in Entra ID.
+- When a login with the service principal is successful, Entra ID provides the client with a token that specifies the roles, audience, and permissions available to the client in Entra ID.
 - The client uses the token obtained from Microsoft Entra ID to exchange it with a temporary token from AWS STS.
 - AWS STS generates a temporary token and provides it to the client.
-- The client is able to take on the IAM Web Identity Role and gain access to the resources permitted for that role.
+- The client is able to assume the IAM Web Identity Role and gain access to the resources permitted for that role.
 - A trust policy within the IAM Web Identity Role authorizes AWS STS to exchange an Entra ID token for an AWS STS token.
 
 -->
@@ -347,15 +343,15 @@ Slide 10: Challenges of Manual Setup in Enterprise Environments
 - Results in a violation of enterprise security policies and compliance because, when done by different individuals, it will result in varying approaches and setups.
 - Needs substantial access privileges in both AWS and the IdP, potentially leading to significant security risks.
 - Requires a deep understanding of both platforms, a competence that can be lacking in many companies.
-
+- Manual configurations are commonly error prone.
 
 -->
 ## Challenges of Manual Setup in Enterprise Environments
 
 - Violation of enterprise security policies
+- Different individuals use varying approaches and setups
 - Requires elevated privileges in both AWS and Entra ID
 - Requires deep understanding of both platforms (AWS IAM and Entra ID)
-- Different individuals use varying approaches and setups
 - Manual configurations are error prone
 
 ---
@@ -494,6 +490,8 @@ Slide: Info & Source Code
 </style>
 
 <i class="fa fa-github"></i> https://github.com/borkod/aws-oidc-automation
+
+<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 640 640"><path fill="#ffffff" d="M192 144C222.9 144 248 118.9 248 88C248 57.1 222.9 32 192 32C161.1 32 136 57.1 136 88C136 118.9 161.1 144 192 144zM176 576L176 416C176 407.2 183.2 400 192 400C200.8 400 208 407.2 208 416L208 576C208 593.7 222.3 608 240 608C257.7 608 272 593.7 272 576L272 240L400 240C417.7 240 432 225.7 432 208C432 190.3 417.7 176 400 176L384 176L384 128L576 128L576 320L384 320L384 288L320 288L320 336C320 362.5 341.5 384 368 384L592 384C618.5 384 640 362.5 640 336L640 112C640 85.5 618.5 64 592 64L368 64C341.5 64 320 85.5 320 112L320 176L197.3 176C151.7 176 108.8 197.6 81.7 234.2L14.3 324.9C3.8 339.1 6.7 359.1 20.9 369.7C35.1 380.3 55.1 377.3 65.7 363.1L112 300.7L112 576C112 593.7 126.3 608 144 608C161.7 608 176 593.7 176 576z"/></svg> https://github.com/borkod/CYC2025
 
 <i class="fa fa-globe"></i> https://www.b3o.tech/
 

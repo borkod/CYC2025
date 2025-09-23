@@ -6,14 +6,22 @@ footer: "@borkod"
 auto-scaling: true 
 ---
 
-<!-- Slide 1: Title Slide -->
+<!-- 
+
+Title Slide
+
+-->
 # Automating Secure OIDC-Based Cross-Cloud Authentication
 
 ## Borko Djurkovic
 
 ---
 
-<!-- Slide: Key Takeaways -->
+<!--
+
+Slide: Key Takeaways
+
+-->
 ## Key Takeaways
 
 - Do not use Access Keys and Secret Access Keys
@@ -27,6 +35,8 @@ auto-scaling: true
 Slide: About Me
 
 Recommended podcast: Stuff You Should Know
+
+Running: Rideau Canal in Ottawa
 
 -->
 ## ABOUT ME
@@ -53,24 +63,25 @@ Recommended podcast: Stuff You Should Know
 <!-- 
 
 Slide: AWS IAM
+
 Identity Management
 
-- AWS IAM enables the creation and management of user identities (users, groups, and roles) within AWS.
-- Each identity can be assigned specific credentials, such as access keys, to authenticate against AWS resources.
-- Supports multi-factor authentication (MFA) for additional security when users access AWS services.
+- Creation and management of user identities (users, groups, and roles) within AWS.
+- Each identity can be assigned **access keys** to authenticate to AWS resources.
+- Supports multi-factor authentication (MFA) for additional security.
 
 Role-Based Access Control (RBAC) & Permission Management
 - Permissions are granted through policies that define what actions are allowed on specific resources.
-- IAM uses roles to assign permissions, rather than assigning them directly to users, offering more flexible and scalable management.
+- IAM roles used to assign permissions.
 - Fine grained access control helps implement the principle of least privilege by ensuring users only have the permissions needed for their role.
 
 Federated Identity Integration (SSO, SAML, OIDC)
 - IAM integrates with external identity providers (e.g., Microsoft Entra ID, Okta) to enable Single Sign-On (SSO) capabilities.
-- Supports both SAML (Security Assertion Markup Language) and OIDC (OpenID Connect) for federating access to AWS and other applications.
-- Enables seamless authentication from external directories, reducing the need for separate AWS credentials and improving security with centralized user management.
+- Supports both SAML (Security Assertion Markup Language) and OIDC (OpenID Connect) for federating access to AWS.
+- Reducing the need for separate AWS credentials and improving security with centralized user management.
 
 Temporary Credentials & Session Management
-- AWS IAM allows for the issuance of temporary security credentials through AWS Security Token Service (STS).
+- AWS IAM enables issuance of temporary security credentials through AWS Security Token Service (STS).
 - Ideal for situations requiring short-term access to AWS resources, such as third-party apps or external contractors.
 - Temporary credentials are automatically revoked after a set time, reducing the risk of stale access permissions.
 
@@ -95,7 +106,8 @@ Temporary Credentials & Session Management
 Slide AWS IAM Authentication
 
 - Access keys are used to authenticate users or services when interacting with AWS resources via the API, AWS CLI, or SDKs.
-- An Access Key ID is public, while the Secret Access Key is private and must be kept secure.
+- Access Key ID is public
+- Secret Access Key is private and must be kept secure.
 - Together, they allow programmatic authentication without needing console credentials.
 - The Access Key ID and Secret Access Key pair work like a username and password for API calls.
 - Example: AWS Credentials File
@@ -127,7 +139,7 @@ Slide: DO NOT USE SECRET KEYS
 - Access keys are tied to specific IAM users, not roles or fine-grained policies.
 
 -->
-## DO NOT USE SECRET KEYS
+## DO NOT USE ACCESS KEYS
 
 - Security risk with long term credentials
 - Against security best practices
@@ -142,7 +154,7 @@ Slide: DO NOT USE SECRET KEYS
 Slide: OIDC
 
 - OIDC is an authentication layer built on top of OAuth 2.0, enabling identity verification using tokens.
-- OIDC extends OAuth 2.0 by providing additional ID Tokens that carry claims (user info) and scopes (permissions).
+- Additionally, these tokens that carry claims (user info) and scopes (permissions).
 - This allows fine-grained authorization in apps by controlling what data users can access based on their identity.
 - It allows applications to authenticate users via external identity providers (e.g., Google, Microsoft).
 - OIDC is commonly used for Single Sign-On (SSO), allowing users to log in once and access multiple apps.
@@ -151,7 +163,9 @@ Slide: OIDC
 - OIDC tokens are short-lived and can be dynamically scoped, reducing the risk of stale or overly broad permissions that are common with IAM access keys.
 
 -->
-## OIDC enables federated identity management across applications and services
+## Better Alternative: OIDC
+
+### OIDC enables federated identity management across applications and services
 
 - Provides identity verification using tokens
 - Enables fine-grained authorization using claims and scopes
@@ -170,10 +184,10 @@ Slide: AWS OIDC
 - Ideal for organizations that want to authenticate users from external identity providers like Google, Facebook, or enterprise SSO solutions.
 - Useful for scenarios where users need access to AWS resources but should not have IAM user credentials (e.g., external contractors, third-party services).
 - Reduces the risk of credential leakage by using short-lived tokens instead of long-term AWS IAM access keys.
-- IAM Web Identity Roles allow users to assume AWS roles using tokens from external identity providers (such as OIDC-compatible services like Google, Facebook, or custom enterprise SSO solutions).
+- **IAM Web Identity Roles** allow users to assume AWS roles using tokens from external identity providers (such as OIDC-compatible services like Google, Facebook, or custom enterprise SSO solutions).
 
 -->
-## AWS IAM OIDC Service
+## AWS IAM OIDC Provider
 
 - Integration with external OIDC IdP's for authentication to AWS
 - Enables federated access and SSO
@@ -187,9 +201,9 @@ Slide: AWS OIDC
 Slide: ENTRA ID
 
 - Entra ID (formerly Azure Active Directory) allows organizations to manage users.
-- Provides tools to manage lifecycle of uses such as provisioning and deprovisioning, access permissions.
-- Governance and security - conditional access policies, MFA, advanced reporting
 - Comprehensive cloud-based IdP
+- Provides tools to manage lifecycle of users such as provisioning and deprovisioning, access permissions.
+- Governance and security - conditional access policies, MFA, advanced reporting
 - Federated access enabling SSO via SAML or OIDC
 - Provides ability to register applications and configuring OIDC, enabling obtaining tokens for API access
 
@@ -207,8 +221,9 @@ Slide: ENTRA ID
 
 Slide: Integrated Solution
 
-- An external process (e.g. CI/CD) logs in with an Azure service principal.
-- When a login with the service principal is successful, it authorizes the use of the Azure App Registration and provides the client with a token that specifies the roles, audience, and permissions available to the client in Azure/Entra ID.
+- An external application (e.g. CI/CD) is registered in Entra ID.
+- An external application logs in with an Azure service principal.
+- When a login with the service principal is successful, it authorizes the use of the Azure App Registration and provides the client with a token that specifies the roles, audience, and permissions available to the client in Entra ID.
 - The client uses the token obtained from Microsoft Entra ID to exchange it with a temporary token from AWS STS.
 - AWS STS generates a temporary token and provides it to the client.
 - The client is able to take on the IAM Web Identity Role and gain access to the resources permitted for that role.
@@ -228,55 +243,105 @@ Slide: Integrated Solution
 
 <!--
 
-Slide: Manual setup: Step 1
+Slide: Manual setup - App Registration
 
 -->
-## Manual Configuration - Step 1
+## Manual Configuration - Application Registration in Entra ID
 
-### Application Registration in Entra ID
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
 
-Microsoft Entra ID integration: Registering an application, creating a service principal, and setting up trust relationships in AWS.
-Step 1: Create an Application in Microsoft Entra ID
-Step 2: Configure OpenID Connect Provider
-Step 3: Integrate IAM Web Identity Role into AWS
-
-Picture of App registration in Entra ID
+![height:550 center](./images/entra-app-registration-manual.png)
 
 ---
 
 <!--
 
-Slide: Manual setup: Step 2
+Slide: Manual setup - App Registration
 
 -->
-## Manual Configuration - Step 2
+## Manual Configuration - Application Registration in Entra ID
 
-### AWS IAM OIDC Provider Configuration
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
 
-Microsoft Entra ID integration: Registering an application, creating a service principal, and setting up trust relationships in AWS.
-Step 1: Create an Application in Microsoft Entra ID
-Step 2: Configure OpenID Connect Provider
-Step 3: Integrate IAM Web Identity Role into AWS
-
-Picture of AWS IAM OIDC Provider Configuration 
+![height:550 center](./images/entra-app-registration-manual-2.png)
 
 ---
 
 <!--
 
-Slide: Manual setup: Step 3
+Slide: Manual setup - AWS IAM OIDC Provider Configuration
+
+OIDC Provider configured for the Entra ID tenant
 
 -->
-## Manual Configuration - Step 3:
+## Manual Configuration - AWS IAM OIDC Provider Configuration
 
-### IAM Web Identity Role Configuration
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
 
-Microsoft Entra ID integration: Registering an application, creating a service principal, and setting up trust relationships in AWS.
-Step 1: Create an Application in Microsoft Entra ID
-Step 2: Configure OpenID Connect Provider
-Step 3: Integrate IAM Web Identity Role into AWS
+![height:300 center](./images/aws-oidc-aud-manual.png)
 
-Picture of AWS IAM Web Identity Role
+---
+
+<!--
+
+Slide: Manual setup - IAM Web Identity Role Configuration
+
+-->
+## Manual Configuration - IAM Web Identity Role Configuration
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:500 center](./images/aws-iam-create-web-role-manual.png)
+
+---
+
+<!--
+
+Slide: Manual setup - IAM Web Identity Role Configuration
+
+-->
+## Manual Configuration - IAM Web Identity Role Configuration
+
+```json
+{
+    "Effect": "Allow",
+    "Action": "sts:AssumeRoleWithWebIdentity",
+    "Principal": {
+        "Federated":
+        "arn:aws:iam::<account>:oidc-provider/
+        sts.windows.net/<tenant>"
+    },
+    "Condition": {
+        "StringEquals": {
+            "sts.windows.net/tenant:aud": [
+                "<audience>"
+            ]
+        }
+    }
+}
+```
+
+![bg fit right](./images/aws-iam-create-web-role-manual-2.png)
 
 ---
 
@@ -286,7 +351,7 @@ Slide 10: Challenges of Manual Setup in Enterprise Environments
 
 - Results in a violation of enterprise security policies and compliance because, when done by different individuals, it will result in varying approaches and setups.
 - Needs substantial access privileges in both AWS and the IdP, potentially leading to significant security risks.
-Requires a deep understanding of both platforms, a competence that can be lacking in many companies.
+- Requires a deep understanding of both platforms, a competence that can be lacking in many companies.
 
 
 -->
@@ -304,17 +369,35 @@ Requires a deep understanding of both platforms, a competence that can be lackin
 
 Slide: Need for automation at scale
 
+- Enterprise organizations multiple AWS accounts for various purposes (e.g. Logging, Networking, Security).
+- Additionally, various business units may have many AWS Accounts.
+- Environments (e.g. DEV, TEST, PROD) are often broken up into different AWS accounts.
+- Many organizations uses AWS Control Tower, AWS Landing Zone Accelerator (LZA) or other automation pipelines to programmatically create AWS accounts at scale.
+- In these scenarios, automation can create AWS IAM OIDC Provider in each account.
+
 -->
 ## Need for automation at scale
 
-AWS Organizations picture of enterprise accounts structure
-Automating account creation via control tower or landing zone
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+![height:400 center](./images/lza.png)
 
 ---
 
 <!--
 
 Slide: Solution overview
+
+- Process starts with creation or deletion of an IAM Web Identity Role in one of the newly created member accounts.
+- AWS CloudTrail records the event.
+- Event Rule captures these specific events and sends them to an Event Bus
+- In the OIDC Factory Account, we also have an event rule
+- Event rule triggers a Lambda Function that then invokes one of two Step Function workflows.
 
 -->
 ## Solution overview
@@ -405,16 +488,20 @@ section {
 ---
 
 <!-- Slide: Info & Source Code -->
-## Key Takeaways
+## Additional Info
 
-Source Code: link
+<style>
+@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+</style>
 
-Blue Sky
+<i class="fa fa-github"></i> https://github.com/borkod/aws-oidc-automation
 
-Twitter
+<i class="fa fa-globe"></i> https://www.b3o.tech/
 
-LinkedIn
+<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 640 640"><path fill="#ffffff" d="M439.8 358.7C436.5 358.3 433.1 357.9 429.8 357.4C433.2 357.8 436.5 358.3 439.8 358.7zM320 291.1C293.9 240.4 222.9 145.9 156.9 99.3C93.6 54.6 69.5 62.3 53.6 69.5C35.3 77.8 32 105.9 32 122.4C32 138.9 41.1 258 47 277.9C66.5 343.6 136.1 365.8 200.2 358.6C203.5 358.1 206.8 357.7 210.2 357.2C206.9 357.7 203.6 358.2 200.2 358.6C106.3 372.6 22.9 406.8 132.3 528.5C252.6 653.1 297.1 501.8 320 425.1C342.9 501.8 369.2 647.6 505.6 528.5C608 425.1 533.7 372.5 439.8 358.6C436.5 358.2 433.1 357.8 429.8 357.3C433.2 357.7 436.5 358.2 439.8 358.6C503.9 365.7 573.4 343.5 593 277.9C598.9 258 608 139 608 122.4C608 105.8 604.7 77.7 586.4 69.5C570.6 62.4 546.4 54.6 483.2 99.3C417.1 145.9 346.1 240.4 320 291.1z"/></svg> [@b3o.tech](https://bsky.app/profile/b3o.tech)
 
-TODO: Update above
+<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 640 640"><path fill="#ffffff" d="M453.2 112L523.8 112L369.6 288.2L551 528L409 528L297.7 382.6L170.5 528L99.8 528L264.7 339.5L90.8 112L236.4 112L336.9 244.9L453.2 112zM428.4 485.8L467.5 485.8L215.1 152L173.1 152L428.4 485.8z"/></svg> [@borkod](https://x.com/borkod)
+
+<i class="fa fa-linkedin"></i> https://www.linkedin.com/in/borkod/
 
 ---

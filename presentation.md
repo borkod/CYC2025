@@ -2,7 +2,7 @@
 marp: true
 theme: nord
 paginate: true
-footer: "@borkod"
+footer: "@borkod / @CommitYourCode"
 auto-scaling: true 
 ---
 
@@ -13,7 +13,9 @@ Title Slide
 -->
 # Automating Secure OIDC-Based Cross-Cloud Authentication
 
-## Borko Djurkovic
+## Commit Your Code 2025
+
+### Borko Djurkovic
 
 ---
 
@@ -73,7 +75,6 @@ Slide: AWS IAM
 - Reducing the need for separate AWS credentials and improving security with centralized user management.
 
 - AWS IAM enables issuance of temporary security credentials through AWS Security Token Service (STS).
-- Ideal for situations requiring short-term access to AWS resources, such as third-party apps or external contractors.
 - Temporary credentials are automatically revoked after a set time, reducing the risk of stale access permissions.
 
 -->
@@ -83,8 +84,8 @@ Slide: AWS IAM
 
 - Identity Management
   - Users, Groups, Roles
-- RBAC and Permissions Management
-  - IAM Roles, IAM Policies
+- Permissions Management and RBAC
+  - IAM Policies, IAM Roles
 - Federated access through integration with external IdP's
   - SSO using SAML or OIDC
 - AWS STS
@@ -99,8 +100,8 @@ Slide AWS IAM Authentication
 - Access keys are used to authenticate users or services when interacting with AWS resources via the API, AWS CLI, or SDKs.
 - Access Key ID is public
 - Secret Access Key is private and must be kept secure.
-- Together, they allow programmatic authentication without needing console credentials.
 - The Access Key ID and Secret Access Key pair work like a username and password for API calls.
+- Together, they allow programmatic authentication without needing console credentials.
 - Example: AWS Credentials File
 
 -->
@@ -127,7 +128,7 @@ Slide: DO NOT USE SECRET KEYS
 - Managing access keys across multiple users, services, and systems becomes complex as environments grow.
 - Access keys are harder to track and audit compared to IAM roles.
 - Against corporate, enterprise, or regulatory security policies.
-- Access keys are tied to specific IAM users. Can't use RBAC to only assume permissions needed for specific use cases.
+- Access keys are tied to specific IAM users. Can't use RBAC to only assume roles needed for specific use cases.
 
 -->
 ## DO NOT USE ACCESS KEYS
@@ -135,8 +136,8 @@ Slide: DO NOT USE SECRET KEYS
 - Security risk with long term credentials
 - Against security best practices
 - Difficult to manage at scale
-- Against corporate security policies
-- Lack of granular access control
+- Against corporate or regulatory security policies
+- Associated with IAM Users
 
 ---
 
@@ -145,10 +146,10 @@ Slide: DO NOT USE SECRET KEYS
 Slide: OIDC
 
 - OIDC (OpenID Connect) is an authentication layer built on top of OAuth 2.0, enabling identity verification using tokens.
-- Additionally, these tokens that carry claims (user info) and scopes (permissions).
+- These tokens can carry claims (user info) and scopes (permissions).
 - This allows fine-grained authorization in apps by controlling what data users can access based on their identity.
 - OIDC tokens are short-lived and can be dynamically scoped, reducing the risk of stale or overly broad permissions that are common with IAM access keys.
-- It allows applications to authenticate users via external identity providers (e.g. Microsoft, Okta).
+- It allows applications to authenticate users via external identity providers (e.g. Microsoft Entra ID).
 - OIDC is commonly used for Single Sign-On (SSO), allowing users to log in once and access multiple apps.
 - Reduces the need for separate credentials in AWS IAM.
 - OIDC provides more secure and scalable user authentication compared to long-term AWS IAM access keys, which are prone to exposure and management overhead.
@@ -170,7 +171,7 @@ Slide: OIDC
 
 Slide: AWS OIDC Provider
 
-- AWS IAM OIDC Provider allows external identity providers (like Microsoft Entra ID) to authenticate users for AWS services.
+- AWS IAM OIDC Provider allows external identity providers (like Microsoft Entra ID) to authenticate users for access to AWS services.
 - It enables federated access, allowing users to sign in using their existing credentials in those external IdP, without needing separate AWS IAM user accounts.
 - Useful for scenarios where users need access to AWS resources but should not have IAM user credentials (e.g., external contractors, third-party services).
 - Reduces the risk of credential leakage by using short-lived tokens instead of long-term AWS IAM access keys.
@@ -194,14 +195,14 @@ Slide: ENTRA ID
 - Provides tools to manage lifecycle of users such as provisioning and deprovisioning, access permissions.
 - Governance and security - conditional access policies, MFA, advanced reporting
 - Federated access enabling SSO via SAML or OIDC
-- Provides ability to register applications and configuring OIDC, enabling obtaining tokens for API access
+- Provides ability to register exrternal applications and configure OIDC
 
 -->
-## Entra ID = Azure based IdP
+## Microsoft Entra ID = Azure based IdP
 
 - Microsoft Azure-based IAM solution (formerly Azure Active Directory)
 - Provides IdP functionality (e.g. user management)
-- Identity governance
+- Identity and security governance
 - Supports SAML and OIDC
 - Application registration for external apps
 
@@ -228,6 +229,19 @@ Slide: Integrated Solution
 2. Upon login, Entra ID provides a token
 3. The client uses the Entra ID token to obtain a temporary token from AWS STS
 4. The client assumes the IAM Web Identity Role
+
+---
+
+<!--
+
+Slide: Configuration Steps
+
+-->
+## Configuration Steps
+
+1. Create Application Registration in Entra ID
+2. Add Audience to AWS IAM OIDC Provider
+3. Create AWS IAM Web Identity Role
 
 ---
 
@@ -363,9 +377,9 @@ Slide: Need for automation at scale
 - Additionally, various business units may have many AWS Accounts.
 - Environments (e.g. DEV, TEST, PROD) are often broken up into different AWS accounts.
 - Temporary accounts (e.g. for developers, or sandbox environments or POC)
-- Many organizations uses AWS Control Tower, AWS Landing Zone Accelerator (LZA) or other automation pipelines to programmatically create AWS accounts at scale.
+- Many organizations use AWS Control Tower, AWS Landing Zone Accelerator (LZA) or other automation pipelines to programmatically create AWS accounts at scale.
 - In these scenarios, automation can create AWS IAM OIDC Provider in each account.
-- At scale, we need automation for OIDC configurations
+- At scale, we need automation for OIDC configurations.
 
 -->
 ## Need for automation at scale
@@ -420,12 +434,12 @@ Slide: Solution Components - Creation of IAM Web Identity Role
 
 - **Assign Role to Audience Lambda**
   - Function updates the trust relationship in the IAM Web Identity Role by adding the audience identifier of the application registration to allow the newly-created service principal to assume the Web Identity Role.
-  - This step is required because, unlike a manual setup, the AWS user does not have an audience identifier so users enter any dummy value which will be overwritten few seconds afterwards.
+  - This step is required because, unlike a manual setup, the AWS user that creates the web identity role does not have an audience identifier so users enter any dummy value. This will be overwritten few seconds later by the automation.
 
 -->
-## Creation of IAM Web Identity Role
+## Creation of IAM Web Identity Role Workflow
 
-![bg fit right](./images/automation-architecture-dark.png)
+![bg fit right](./images/automation-workflow-1-dark.png)
 
 <style scoped>
 section {
@@ -433,7 +447,7 @@ section {
 }
 </style>
 
-- **Create Service Principal Lambda**
+- **Create App Registration Lambda**
   - Invokes Entra ID API to register a new application.
 
 - **Add Audience to OIDC Provider Lambda**
@@ -455,9 +469,9 @@ Slide: Solution Components - Deletion of IAM Web Identity Role
   - Removes the audience identifier from the IAM OIDC Provider.
 
 -->
-## Deletion of IAM Web Identity Role
+## Deletion of IAM Web Identity Role Workflow
 
-![bg fit right](./images/automation-architecture-dark.png)
+![bg fit right](./images/automation-workflow-2-dark.png)
 
 <style scoped>
 section {
@@ -465,7 +479,7 @@ section {
 }
 </style>
 
-- **Delete Service Principal Lambda**
+- **Delete App Registration Lambda**
   - Invokes Entra ID API to delete the existing app registration.
 
 - **Remove Audience from OIDC Provider Lambda**

@@ -72,7 +72,7 @@ Slide: AWS IAM
 
 - IAM integrates with external identity providers (e.g., Microsoft Entra ID, Okta) to enable Single Sign-On (SSO) capabilities.
 - Supports both SAML (Security Assertion Markup Language) and OIDC (OpenID Connect) for federating access to AWS.
-- Reducing the need for separate AWS credentials and improving security with centralized user management.
+- Reduces the need for separate AWS credentials and improves security with centralized user management.
 
 - AWS IAM enables issuance of temporary security credentials through AWS Security Token Service (STS).
 - Temporary credentials are automatically revoked after a set time, reducing the risk of stale access permissions.
@@ -175,7 +175,7 @@ Slide: AWS OIDC Provider
 - It enables federated access, allowing users to sign in using their existing credentials in those external IdP, without needing separate AWS IAM user accounts.
 - Useful for scenarios where users need access to AWS resources but should not have IAM user credentials (e.g., external contractors, third-party services).
 - Reduces the risk of credential leakage by using short-lived tokens instead of long-term AWS IAM access keys.
-- IAM Web Identity Roles allow users to obtain permissions in AWS using tokens from external identity providers.
+- IAM Web Identity Roles allow users to obtain permissions in AWS.
 
 -->
 ## AWS IAM OIDC Provider
@@ -195,7 +195,7 @@ Slide: ENTRA ID
 - Provides tools to manage lifecycle of users such as provisioning and deprovisioning, access permissions.
 - Governance and security - conditional access policies, MFA, advanced reporting
 - Federated access enabling SSO via SAML or OIDC
-- Provides ability to register exrternal applications and configure OIDC
+- Provides ability to register external applications and configure OIDC
 
 -->
 ## Microsoft Entra ID = Azure based IdP
@@ -354,7 +354,7 @@ Slide: Manual setup - IAM Web Identity Role Configuration
 Slide 10: Challenges of Manual Setup in Enterprise Environments
 
 - Results in a violation of enterprise security policies and compliance because, when done by different individuals, it will result in varying approaches and setups.
-- Needs substantial access privileges in both AWS and the IdP, potentially leading to significant security risks.
+- Needs substantial access privileges in both AWS and Entra ID, potentially leading to significant security risks.
 - Requires a deep understanding of both platforms, a competence that can be lacking in many companies.
 - Manual configurations are commonly error prone.
 
@@ -433,7 +433,7 @@ Slide: Solution Components - Creation of IAM Web Identity Role
   - Function receives an audience identifier. It adds the audience identifier to the pre-deployed IAM OIDC Provider in the newly-created AWS account.
 
 - **Assign Role to Audience Lambda**
-  - Function updates the trust relationship in the IAM Web Identity Role by adding the audience identifier of the application registration to allow the newly-created service principal to assume the Web Identity Role.
+  - Function updates the trust relationship in the IAM Web Identity Role by adding the audience identifier of the application registration.
   - This step is required because, unlike a manual setup, the AWS user that creates the web identity role does not have an audience identifier so users enter any dummy value. This will be overwritten few seconds later by the automation.
 
 -->
